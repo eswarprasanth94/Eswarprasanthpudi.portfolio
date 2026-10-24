@@ -1,0 +1,17 @@
+{
+  "name": "portfolio-3d",
+  "version": "1.0.0",
+  "description": "Personal Portfolio with Interactive 3D Model Carousel",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [
+    "threejs",
+    "portfolio",
+    "3d",
+    "carousel"
+  ],
+  "author": "Pudi Eswar Prasanth",
+  "license": "ISC"
+}

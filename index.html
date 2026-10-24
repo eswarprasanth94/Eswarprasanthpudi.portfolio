@@ -1,0 +1,2284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pudi Eswar Prasanth - Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <!-- Three.js + GLTFLoader -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      width: 100%;
+      background-color: #FFCC19;
+      background-image: 
+        linear-gradient(to right, rgba(0, 0, 0, 0.07) 1.5px, transparent 1.5px),
+        linear-gradient(to bottom, rgba(0, 0, 0, 0.07) 1.5px, transparent 1.5px);
+      background-size: 80px 80px;
+      background-position: 0 0;
+      background-attachment: fixed;
+      font-family: 'Outfit', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+    }
+
+    /* Fixed full-screen hero stage that swipes out on scroll */
+    .hero-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 8vw;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    /* Left Side Content - swipes left */
+    .hero-content {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      max-width: 520px;
+      z-index: 2;
+      will-change: transform, opacity;
+      transform: translate3d(0, 0, 0);
+      pointer-events: auto;
+    }
+
+    .title {
+      font-size: clamp(3rem, 6.5vw, 5.2rem);
+      font-weight: 900;
+      line-height: 0.98;
+      color: #000000;
+      letter-spacing: -0.04em;
+      text-transform: capitalize;
+    }
+
+    .title .line-1 {
+      display: block;
+      color: #000000;
+    }
+
+    .title .line-2 {
+      display: block;
+      color: #000000;
+    }
+
+    /* Role slots below name */
+    .role-slots {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    .role-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 22px;
+      background: #000000;
+      color: #FFCC19;
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      border-radius: 999px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+      cursor: default;
+      user-select: none;
+    }
+
+    .role-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #FFCC19;
+    }
+
+    /* Right Side - Black Circle Photo Slot - swipes right */
+    .photo-container {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+      will-change: transform, opacity;
+      transform: translate3d(0, 0, 0);
+      pointer-events: auto;
+    }
+
+    .photo-ring {
+      position: absolute;
+      width: clamp(280px, 36vw, 480px);
+      height: clamp(280px, 36vw, 480px);
+      border-radius: 50%;
+      border: 2px dashed rgba(0, 0, 0, 0.2);
+      transform: scale(1.1);
+      animation: rotateRing 30s linear infinite;
+      pointer-events: none;
+    }
+
+    @keyframes rotateRing {
+      from { transform: rotate(0deg) scale(1.1); }
+      to { transform: rotate(360deg) scale(1.1); }
+    }
+
+    .photo-slot {
+      position: relative;
+      width: clamp(260px, 34vw, 440px);
+      height: clamp(260px, 34vw, 440px);
+      border-radius: 50%;
+      background: #0d0d0d;
+      box-shadow: 
+        0 24px 60px rgba(0, 0, 0, 0.28),
+        0 4px 16px rgba(0, 0, 0, 0.15),
+        inset 0 0 0 3px rgba(255, 255, 255, 0.1);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+      -webkit-user-select: none;
+      pointer-events: none;
+    }
+
+    .photo-slot img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center bottom;
+      display: block;
+      pointer-events: none;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    /* Spacer for hero scroll distance */
+    .hero-scroll-track {
+      height: 100vh;
+      width: 100%;
+    }
+
+
+    /* =========================================
+       3D DESIGNS SECTION (Pure Yellow Theme)
+       ========================================= */
+    .designs-section {
+      position: relative;
+      z-index: 20;
+      background-color: transparent;
+      padding: 40px 8vw 90px;
+    }
+
+    .section-title {
+      font-size: clamp(3rem, 6.5vw, 5.2rem);
+      font-weight: 900;
+      line-height: 1;
+      color: #000000;
+      letter-spacing: -0.04em;
+      margin-bottom: 28px;
+    }
+
+    /* 3 Category Buttons under 3D Designs */
+    .design-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .design-btn {
+      appearance: none;
+      border: 1px solid #000000;
+      background: #000000;
+      color: #FFCC19;
+      font-family: 'Outfit', system-ui, sans-serif;
+      font-size: 0.74rem;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+      padding: 6px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
+      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .design-btn:hover {
+      transform: translateY(-2px) scale(1.02);
+      background: #1a1a1a;
+      box-shadow: 0 5px 14px rgba(0, 0, 0, 0.2);
+    }
+
+    .design-btn:active {
+      transform: translateY(0) scale(0.98);
+    }
+
+    .btn-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: #FFCC19;
+      transition: transform 0.2s ease;
+    }
+
+    .design-btn:hover .btn-dot {
+      transform: scale(1.2);
+    }
+
+    /* Active category button */
+    .design-btn.active {
+      background: #FFCC19;
+      color: #000000;
+      border-color: #000000;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.28);
+    }
+
+    .design-btn.active .btn-dot {
+      background: #000000;
+    }
+
+    /* Showcase & Description Row Layout */
+    .showcase-layout {
+      display: flex;
+      align-items: stretch;
+      gap: 32px;
+      margin-top: 24px;
+      width: 100%;
+      max-width: 1480px;
+    }
+
+    /* Rounded White Showcase Box */
+    .showcase-box {
+      flex: 1 1 62%;
+      min-width: 0;
+      height: clamp(380px, 58vh, 600px);
+      background: #FFFFFF;
+      border-radius: 40px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.12);
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+      padding-bottom: 0;
+    }
+
+    /* 3D Skills & Statement directly on the yellow screen matching 3D screen height */
+    .showcase-desc-area {
+      flex: 0 0 clamp(300px, 32vw, 420px);
+      height: 100%;
+      min-height: clamp(380px, 58vh, 600px);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-evenly;
+      gap: 16px;
+      padding: 8px 0;
+    }
+
+    .desc-text-line {
+      font-family: 'Outfit', system-ui, -apple-system, sans-serif;
+      font-size: clamp(0.95rem, 1.15vw, 1.12rem);
+      font-weight: 600;
+      line-height: 1.5;
+      color: #000000;
+      letter-spacing: -0.015em;
+      position: relative;
+      padding-left: 18px;
+    }
+
+    .desc-text-line::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 9px;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #000000;
+    }
+
+    .desc-text-line strong {
+      font-weight: 800;
+      color: #000000;
+    }
+
+    /* 3D Carousel Canvas */
+    #carouselCanvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 2;
+      outline: none;
+      cursor: grab;
+      display: block;
+    }
+
+    #carouselCanvas:active {
+      cursor: grabbing;
+    }
+
+    /* Model Loading Indicator */
+    .model-loader {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #000000;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      z-index: 6;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255, 255, 255, 0.92);
+      padding: 10px 22px;
+      border-radius: 999px;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      pointer-events: none;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    .model-loader.visible {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .loader-spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(0, 0, 0, 0.15);
+      border-top-color: #000000;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Small subtle blueprint grid lines */
+    .showcase-grid {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-size: 28px 28px;
+      background-image: 
+        linear-gradient(to right, rgba(0, 0, 0, 0.04) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
+      pointer-events: none;
+    }
+
+    /* Left and right navigation buttons vertically centered */
+    .showcase-top-controls {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      left: 20px;
+      right: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .showcase-nav-btn {
+      appearance: none;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      color: #000000;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+      pointer-events: auto;
+    }
+
+    .showcase-nav-btn svg {
+      width: 20px;
+      height: 20px;
+      stroke: #000000;
+      stroke-width: 2.2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      fill: none;
+      transition: transform 0.2s ease, stroke 0.2s ease;
+    }
+
+    .showcase-nav-btn:hover {
+      background: #000000;
+      border-color: #000000;
+      transform: scale(1.1);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .showcase-nav-btn:hover svg {
+      stroke: #FFCC19;
+    }
+
+    .showcase-nav-btn:active {
+      transform: scale(0.95);
+    }
+
+    /* Long horizontal, small vertical stage attached flush to the bottom */
+    .showcase-stage-wrapper {
+      position: relative;
+      width: 82%;
+      max-width: 780px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      z-index: 2;
+      margin-bottom: 0;
+      pointer-events: none;
+    }
+
+    .showcase-stage {
+      width: 100%;
+      height: 28px;
+      background: linear-gradient(180deg, #F0F0F0 0%, #D8D8D8 100%);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      border-bottom: none;
+      border-radius: 16px 16px 0 0;
+      box-shadow: 
+        0 -6px 20px rgba(0, 0, 0, 0.06),
+        inset 0 1px 0 rgba(255, 255, 255, 0.9),
+        0 0 20px rgba(255, 204, 25, 0.15);
+      position: relative;
+    }
+
+    /* Top surface rim highlight of the stage */
+    .showcase-stage::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 5%;
+      width: 90%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(255, 204, 25, 0.9), transparent);
+      border-radius: 999px;
+    }
+
+    /* =========================================
+       TECHNICAL WORKS SECTION
+       ========================================= */
+    .tech-section {
+      position: relative;
+      z-index: 20;
+      background-color: transparent;
+      padding: 40px 8vw 160px;
+    }
+
+    /* Full-width Black Showcase Box */
+    .tech-showcase-box {
+      width: 100%;
+      max-width: 1480px;
+      background: #000000;
+      border-radius: 40px;
+      margin-top: 24px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.22);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .tech-grid-display {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px;
+      width: 100%;
+      padding: clamp(28px, 3.5vw, 48px);
+      position: relative;
+      z-index: 3;
+    }
+
+    .tech-card {
+      background: #111111;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 24px;
+      padding: 24px 22px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+      transition: all 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .tech-card:hover {
+      background: #181818;
+      transform: translateY(-5px) scale(1.02);
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.6);
+      border-color: rgba(255, 204, 25, 0.4);
+    }
+
+    .tech-card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .tech-card-top svg {
+      stroke: rgba(255, 255, 255, 0.5);
+      transition: stroke 0.2s ease, transform 0.2s ease;
+    }
+
+    .tech-card:hover .tech-card-top svg {
+      stroke: #FFCC19;
+      transform: translate(2px, -2px);
+    }
+
+    .tech-tag {
+      font-family: 'Space Grotesk', system-ui, sans-serif;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(255, 204, 25, 0.12);
+      color: #FFCC19;
+      border: 1px solid rgba(255, 204, 25, 0.25);
+    }
+
+    .tech-card-title {
+      font-family: 'Outfit', system-ui, sans-serif;
+      font-size: clamp(1.15rem, 1.3vw, 1.35rem);
+      font-weight: 800;
+      line-height: 1.25;
+      color: #FFFFFF;
+      letter-spacing: -0.02em;
+    }
+
+    .tech-card-desc {
+      font-family: 'Outfit', system-ui, sans-serif;
+      font-size: 0.92rem;
+      font-weight: 400;
+      line-height: 1.5;
+      color: rgba(255, 255, 255, 0.75);
+    }
+
+    .tech-stack-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .tech-stack-chip {
+      font-family: 'Space Grotesk', system-ui, sans-serif;
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.08);
+      color: rgba(255, 255, 255, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .tech-card:hover .tech-stack-chip {
+      background: rgba(255, 204, 25, 0.15);
+      color: #FFCC19;
+      border-color: rgba(255, 204, 25, 0.3);
+    }
+
+    /* =========================================
+       FOUNDER SECTION
+       ========================================= */
+    .founder-section {
+      position: relative;
+      z-index: 20;
+      background-color: transparent;
+      padding: 60px 8vw 200px;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    .founder-container {
+      width: 100%;
+      max-width: 1400px;
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: clamp(40px, 6vw, 100px);
+      align-items: center;
+    }
+
+    .founder-info {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      will-change: transform, opacity;
+    }
+
+    .founder-title {
+      font-size: clamp(3.5rem, 7vw, 6rem);
+      font-weight: 900;
+      line-height: 1;
+      color: #000000;
+      letter-spacing: -0.04em;
+    }
+
+    .founder-intro {
+      font-family: 'Outfit', system-ui, sans-serif;
+      font-size: clamp(1.2rem, 1.6vw, 1.55rem);
+      font-weight: 700;
+      line-height: 1.35;
+      color: #000000;
+      letter-spacing: -0.015em;
+    }
+
+    .founder-intro .intro-lead {
+      display: block;
+    }
+
+    .founder-intro .intro-sub {
+      display: block;
+      color: #000000;
+      font-weight: 800;
+    }
+
+    .founder-body {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .founder-p {
+      font-family: 'Outfit', system-ui, sans-serif;
+      font-size: clamp(1rem, 1.25vw, 1.2rem);
+      font-weight: 500;
+      line-height: 1.6;
+      color: #000000;
+      letter-spacing: -0.01em;
+      max-width: 680px;
+    }
+
+    /* Smartphone Frame Mockup exactly matching image */
+    .founder-mockup-wrapper {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      width: 100%;
+      padding-right: clamp(10px, 3vw, 50px);
+    }
+
+    .phone-mockup {
+      width: clamp(200px, 20vw, 290px);
+      aspect-ratio: 9 / 18.5;
+      background: #000000;
+      border: 6px solid #000000;
+      border-radius: 44px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 24px 50px rgba(0, 0, 0, 0.2);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Dynamic Island pill notch at top */
+    .phone-island {
+      width: 82px;
+      height: 18px;
+      background: #000000;
+      border-radius: 999px;
+      margin-top: 10px;
+      position: relative;
+      z-index: 5;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: 9px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+    }
+
+    .phone-screen-img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      z-index: 1;
+      display: block;
+      pointer-events: none;
+      user-select: none;
+      transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* Black screen overlay simulating the display powered off */
+    .phone-screen-off {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #050505;
+      z-index: 2;
+      pointer-events: none;
+      transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      opacity: 1;
+    }
+
+    .phone-camera-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #111111;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    /* =========================================
+       VIDEO EDITOR & CINEMATOGRAPHER SECTION
+       (Clean typography + button, no blocks/cards)
+       ========================================= */
+    .media-section {
+      position: relative;
+      z-index: 20;
+      background-color: transparent;
+      padding: 100px 8vw 200px;
+    }
+
+    .media-container {
+      width: 100%;
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 36px clamp(40px, 6vw, 80px);
+    }
+
+    .media-text-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      max-width: 740px;
+    }
+
+    .media-title {
+      font-size: clamp(2.8rem, 5.5vw, 4.8rem);
+      font-weight: 900;
+      line-height: 1.05;
+      color: #000000;
+      letter-spacing: -0.04em;
+    }
+
+    .media-desc {
+      font-family: 'Outfit', system-ui, sans-serif;
+      font-size: clamp(1.05rem, 1.4vw, 1.35rem);
+      font-weight: 500;
+      line-height: 1.6;
+      color: #000000;
+      letter-spacing: -0.01em;
+    }
+
+    .media-btn-wrap {
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .media-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 18px 36px;
+      background: #000000;
+      color: #FFCC19;
+      font-family: 'Outfit', system-ui, sans-serif;
+      font-size: clamp(1.05rem, 1.3vw, 1.25rem);
+      font-weight: 800;
+      letter-spacing: 0.3px;
+      text-transform: capitalize;
+      text-decoration: none;
+      border-radius: 999px;
+      border: 2px solid #000000;
+      cursor: pointer;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.22);
+      transition: all 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .media-btn svg {
+      transition: transform 0.25s ease;
+      stroke: #FFCC19;
+    }
+
+    .media-btn:hover {
+      transform: translateY(-4px) scale(1.03);
+      background: #111111;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+      color: #FFFFFF;
+    }
+
+    .media-btn:hover svg {
+      stroke: #FFFFFF;
+      transform: translate(4px, -4px);
+    }
+
+    .media-btn:active {
+      transform: translateY(0) scale(0.98);
+    }
+
+    /* =========================================
+       ROBOTICS AND IOT SECTION
+       ========================================= */
+    .robotics-section {
+      position: relative;
+      z-index: 20;
+      background-color: transparent;
+      padding: 40px 8vw 160px;
+    }
+
+    .robotics-grid-display {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+      width: 100%;
+      padding: clamp(28px, 3.5vw, 48px);
+      position: relative;
+      z-index: 3;
+    }
+
+    /* =========================================
+       CONTACT SECTION
+       ========================================= */
+    .contact-section {
+      position: relative;
+      z-index: 20;
+      background-color: transparent;
+      padding: 60px 8vw 180px;
+    }
+
+    .contact-container {
+      width: 100%;
+      max-width: 1480px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 36px;
+    }
+
+    .contact-header {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-width: 650px;
+    }
+
+    .contact-subtext {
+      font-family: 'Outfit', system-ui, sans-serif;
+      font-size: clamp(1.05rem, 1.3vw, 1.25rem);
+      font-weight: 500;
+      color: #000000;
+      line-height: 1.5;
+    }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+      width: 100%;
+    }
+
+    .contact-card {
+      background: #000000;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 28px;
+      padding: clamp(28px, 3.5vw, 40px);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 28px;
+      text-decoration: none;
+      color: inherit;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .contact-card:hover {
+      transform: translateY(-6px) scale(1.02);
+      box-shadow: 0 24px 50px rgba(0, 0, 0, 0.4);
+      border-color: rgba(255, 204, 25, 0.5);
+      background: #0d0d0d;
+    }
+
+    .contact-card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+    }
+
+    .contact-icon-bubble {
+      width: 52px;
+      height: 52px;
+      border-radius: 16px;
+      background: rgba(255, 204, 25, 0.12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #FFCC19;
+      border: 1px solid rgba(255, 204, 25, 0.25);
+      transition: all 0.25s ease;
+    }
+
+    .contact-card:hover .contact-icon-bubble {
+      background: #FFCC19;
+      color: #000000;
+      transform: scale(1.08) rotate(4deg);
+    }
+
+    .contact-arrow-icon {
+      color: rgba(255, 255, 255, 0.4);
+      transition: all 0.25s ease;
+    }
+
+    .contact-card:hover .contact-arrow-icon {
+      color: #FFCC19;
+      transform: translate(3px, -3px);
+    }
+
+    .contact-label {
+      font-family: 'Space Grotesk', system-ui, sans-serif;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.55);
+      margin-bottom: 6px;
+    }
+
+    .contact-value {
+      font-family: 'Outfit', system-ui, sans-serif;
+      font-size: clamp(1.2rem, 1.8vw, 1.65rem);
+      font-weight: 800;
+      color: #FFFFFF;
+      letter-spacing: -0.02em;
+      word-break: break-all;
+      transition: color 0.2s ease;
+    }
+
+    .contact-card:hover .contact-value {
+      color: #FFCC19;
+    }
+
+    /* Footer mark */
+    .contact-footer-note {
+      font-family: 'Space Grotesk', system-ui, sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: rgba(0, 0, 0, 0.6);
+      text-align: center;
+      margin-top: 40px;
+      letter-spacing: 0.5px;
+    }
+    @media (max-width: 860px) {
+      .hero-container {
+        flex-direction: column;
+        justify-content: center;
+        gap: 36px;
+        padding: 40px 24px;
+        text-align: center;
+      }
+
+      .hero-content {
+        align-items: center;
+      }
+
+      .role-slots {
+        justify-content: center;
+      }
+
+      .designs-section {
+        padding: 30px 6vw 60px;
+      }
+
+      .tech-section {
+        padding: 30px 6vw 80px;
+      }
+
+      .founder-section {
+        padding: 40px 6vw 120px;
+      }
+
+      .media-section {
+        padding: 60px 6vw 120px;
+      }
+
+      .robotics-section {
+        padding: 30px 6vw 100px;
+      }
+
+      .founder-container {
+        grid-template-columns: 1fr;
+        gap: 40px;
+        text-align: left;
+      }
+
+      .phone-mockup {
+        width: clamp(190px, 52vw, 240px);
+      }
+
+      .showcase-layout {
+        flex-direction: column;
+        gap: 24px;
+      }
+
+      .showcase-box {
+        width: 100%;
+        height: clamp(340px, 50vh, 520px);
+      }
+
+      .showcase-desc-area {
+        width: 100%;
+        flex: none;
+        min-height: auto;
+      }
+
+      .tech-grid-display,
+      .robotics-grid-display,
+      .contact-grid {
+        grid-template-columns: 1fr;
+        padding: 20px;
+      }
+    }
+
+    @media (max-width: 1100px) and (min-width: 861px) {
+      .tech-grid-display {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .founder-container {
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==================== HERO SECTION ==================== -->
+  <div class="hero-container">
+    <div class="hero-content" id="heroText">
+      <h1 class="title">
+        <span class="line-1">Pudi Eswar</span>
+        <span class="line-2">Prasanth</span>
+      </h1>
+      <div class="role-slots">
+        <span class="role-tag">
+          <span class="role-dot"></span>
+          AI Engineer
+        </span>
+        <span class="role-tag">
+          <span class="role-dot"></span>
+          3D Designer
+        </span>
+      </div>
+    </div>
+
+    <div class="photo-container" id="heroPhoto">
+      <div class="photo-ring"></div>
+      <div class="photo-slot" id="photoSlot">
+        <img id="photoImage" src="assets/Prashu BG.png" alt="Pudi Eswar Prasanth" />
+      </div>
+    </div>
+  </div>
+
+  <!-- Scroll buffer to swipe out Hero Section -->
+  <div class="hero-scroll-track"></div>
+
+
+  <!-- ==================== 3D DESIGNS SECTION ==================== -->
+  <section class="designs-section" id="3d-designs">
+    <h2 class="section-title">3D Designs</h2>
+    <div class="design-buttons">
+      <button class="design-btn active" type="button" data-category="aerospace">
+        <span class="btn-dot"></span>
+        Aerospace Designs
+      </button>
+      <button class="design-btn" type="button" data-category="automobile">
+        <span class="btn-dot"></span>
+        Automobile Designs
+      </button>
+      <button class="design-btn" type="button" data-category="character">
+        <span class="btn-dot"></span>
+        Character Designs
+      </button>
+    </div>
+    <!-- Showcase Layout: 3D Stage Box + Skills & Statement Card -->
+    <div class="showcase-layout">
+      <!-- Rounded White 3D Showcase Box -->
+      <div class="showcase-box" id="showcaseBox">
+        <!-- 3D Carousel WebGL Canvas -->
+        <canvas id="carouselCanvas"></canvas>
+
+        <!-- Loading and Error overlay -->
+        <div class="model-loader visible" id="modelLoader">
+          <div class="loader-spinner" id="loaderSpinner"></div>
+          <span id="loaderText">Loading 3D Models...</span>
+        </div>
+
+        <!-- Blueprint grid lines -->
+        <div class="showcase-grid"></div>
+
+        <!-- Top left and right navigation buttons -->
+        <div class="showcase-top-controls">
+          <button class="showcase-nav-btn" id="prevBtn" type="button" aria-label="Previous">
+            <svg viewBox="0 0 24 24">
+              <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+          </button>
+          <button class="showcase-nav-btn" id="nextBtn" type="button" aria-label="Next">
+            <svg viewBox="0 0 24 24">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </button>
+        </div>
+        
+        <!-- Long horizontal, small vertical stage attached flush to the bottom -->
+        <div class="showcase-stage-wrapper">
+          <div class="showcase-stage"></div>
+        </div>
+      </div>
+
+      <!-- Skills & Statement Description Card beside the 3D screen -->
+      <!-- 3D Skills & Statement directly on the yellow screen matching 3D screen height -->
+      <div class="showcase-desc-area">
+        <p class="desc-text-line">
+          Skilled in <strong>3D modeling</strong>, <strong>texturing</strong>, and <strong>rendering</strong> using <strong>Blender</strong> and <strong>Autodesk Maya</strong>.
+        </p>
+        <p class="desc-text-line">
+          Experienced in creating detailed <strong>3D characters</strong>, realistic <strong>environments</strong>, and creative visual concepts.
+        </p>
+        <p class="desc-text-line">
+          Proficient in <strong>AutoCAD</strong> for precise <strong>2D drafting</strong>, technical drawings, and <strong>3D modeling</strong>.
+        </p>
+        <p class="desc-text-line">
+          Passionate about transforming innovative ideas into detailed digital designs through creativity and technical precision.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== TECHNICAL WORKS SECTION ==================== -->
+  <section class="tech-section" id="technical-works">
+    <h2 class="section-title">Technical Works</h2>
+
+    <!-- Technical Works Black Showcase Box (All 6 Slots Visible, No Right Text) -->
+    <div class="tech-showcase-box">
+      <!-- Subtle blueprint grid lines for technical aesthetic -->
+      <div class="showcase-grid" style="background-image: linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);"></div>
+
+      <!-- Technical Cards Display: All 6 Slots -->
+      <div class="tech-grid-display" id="techDisplay">
+        <!-- Slot 1: Vanessa AI -->
+        <div class="tech-card">
+          <div class="tech-card-top">
+            <span class="tech-tag">Smart AI</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+          </div>
+          <div>
+            <h3 class="tech-card-title">Vanessa &mdash; Smart AI</h3>
+            <p class="tech-card-desc">Created a smart, responsive conversational AI assistant named Vanessa powered by intelligent natural language understanding and context awareness.</p>
+          </div>
+          <div class="tech-stack-row">
+            <span class="tech-stack-chip">Smart AI</span>
+            <span class="tech-stack-chip">Python</span>
+            <span class="tech-stack-chip">LLM / NLP</span>
+          </div>
+        </div>
+
+        <!-- Slot 2: AI Personal Habit Tracker -->
+        <div class="tech-card">
+          <div class="tech-card-top">
+            <span class="tech-tag">AI Lifestyle</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+          </div>
+          <div>
+            <h3 class="tech-card-title">AI Personal Habit Tracker</h3>
+            <p class="tech-card-desc">Created an intelligent habit tracking system featuring 'Full Potential Mode' for algorithmic discipline, predictive coaching, and deep analytics.</p>
+          </div>
+          <div class="tech-stack-row">
+            <span class="tech-stack-chip">Full Potential Mode</span>
+            <span class="tech-stack-chip">AI Tracker</span>
+            <span class="tech-stack-chip">Analytics</span>
+          </div>
+        </div>
+
+        <!-- Slot 3: Portfolios for Students -->
+        <div class="tech-card">
+          <div class="tech-card-top">
+            <span class="tech-tag">Personal Branding</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+          </div>
+          <div>
+            <h3 class="tech-card-title">Portfolios for Students</h3>
+            <p class="tech-card-desc">Created custom, modern, high-impact responsive digital portfolios tailored for students to showcase projects, achievements, and career skills.</p>
+          </div>
+          <div class="tech-stack-row">
+            <span class="tech-stack-chip">Portfolios</span>
+            <span class="tech-stack-chip">Responsive Web</span>
+            <span class="tech-stack-chip">UI/UX</span>
+          </div>
+        </div>
+
+        <!-- Slot 4: College Event Management Website -->
+        <div class="tech-card">
+          <div class="tech-card-top">
+            <span class="tech-tag">Event Management</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+          </div>
+          <div>
+            <h3 class="tech-card-title">College Event Website</h3>
+            <p class="tech-card-desc">Created our college event website for management featuring automated registrations, schedule coordinators, and real-time announcements.</p>
+          </div>
+          <div class="tech-stack-row">
+            <span class="tech-stack-chip">Event Portal</span>
+            <span class="tech-stack-chip">Full-Stack</span>
+            <span class="tech-stack-chip">Management</span>
+          </div>
+        </div>
+
+        <!-- Slot 5: E-Commerce Store -->
+        <div class="tech-card">
+          <div class="tech-card-top">
+            <span class="tech-tag">E-Commerce</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+          </div>
+          <div>
+            <h3 class="tech-card-title">E-Commerce Store</h3>
+            <p class="tech-card-desc">Created a complete modern E-Commerce store featuring dynamic product catalogs, seamless shopping cart, and optimized checkout flow.</p>
+          </div>
+          <div class="tech-stack-row">
+            <span class="tech-stack-chip">Online Store</span>
+            <span class="tech-stack-chip">Shopping Cart</span>
+            <span class="tech-stack-chip">Payment Gateway</span>
+          </div>
+        </div>
+
+        <!-- Slot 6: E-Learning Platform -->
+        <div class="tech-card">
+          <div class="tech-card-top">
+            <span class="tech-tag">EdTech</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+          </div>
+          <div>
+            <h3 class="tech-card-title">E-Learning Platform</h3>
+            <p class="tech-card-desc">Created an interactive E-Learning platform designed for video lectures, interactive modules, course management, and progress tracking.</p>
+          </div>
+          <div class="tech-stack-row">
+            <span class="tech-stack-chip">E-Learning</span>
+            <span class="tech-stack-chip">Video Lectures</span>
+            <span class="tech-stack-chip">Interactive Platform</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== FOUNDER SECTION ==================== -->
+  <section class="founder-section" id="founder">
+    <div class="founder-container">
+      <!-- Left Column: Founder Statements -->
+      <div class="founder-info" id="founderInfo">
+        <h2 class="founder-title">Founder</h2>
+        <div class="founder-intro">
+          <span class="intro-lead">Hy im Pudi Eswar Prasanth</span>
+          <span class="intro-sub">Founder of - Vestiq</span>
+        </div>
+        <div class="founder-body">
+          <p class="founder-p">
+            VESTIQ is an e-commerce startup concept designed to make clothing shopping faster, smarter, and more personalized.
+          </p>
+          <p class="founder-p">
+            The platform aims to connect customers with nearby clothing stores, enabling them to discover and order fashion products with a target delivery time of just 15 minutes.
+          </p>
+          <p class="founder-p">
+            One of VESTIQ's key innovations is its planned 3D virtual try-on experience, allowing customers to create customizable avatars and visualize how clothing may look before making a purchase.
+          </p>
+          <p class="founder-p">
+            I'm working toward building an integrated shopping experience that combines local commerce, personalized fashion discovery, and interactive 3D technology.
+          </p>
+        </div>
+      </div>
+
+      <!-- Right Column: Smartphone Mockup Screen matching image -->
+      <div class="founder-mockup-wrapper">
+        <div class="phone-mockup" id="founderPhone">
+          <!-- Dynamic Island pill notch -->
+          <div class="phone-island">
+            <span class="phone-camera-dot"></span>
+          </div>
+          <!-- Turned-off black screen layer -->
+          <div class="phone-screen-off" id="phoneScreenOff"></div>
+          <img class="phone-screen-img" id="phoneScreenImg" src="assets/vestiq-screen.png" alt="VESTIQ Virtual Try-on App Screen" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== VIDEO EDITOR & CINEMATOGRAPHER SECTION ==================== -->
+  <section class="media-section" id="media-works">
+    <div class="media-container">
+      <div class="media-text-wrap">
+        <h2 class="media-title">Video Editor &amp; Cinematographer</h2>
+        <p class="media-desc">
+          I was a part-time video editor and cinematographer, capturing cinematic visuals, storytelling sequences, and crafting precision video edits with rhythm and visual depth.
+        </p>
+      </div>
+      <div class="media-btn-wrap">
+        <a href="#previous-works" class="media-btn" id="previousWorksBtn">
+          <span>Previous Works</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== ROBOTICS AND IOT SECTION ==================== -->
+  <section class="robotics-section" id="robotics-iot">
+    <h2 class="section-title">Robotics and IoT</h2>
+
+    <!-- Full-width Black Showcase Box -->
+    <div class="tech-showcase-box">
+      <div class="robotics-grid-display">
+        <!-- Slot 1: Smart Dustbin -->
+        <div class="tech-card">
+          <div class="tech-card-top">
+            <span class="tech-tag">IoT &amp; Automation</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+          </div>
+          <div>
+            <h3 class="tech-card-title">Smart Dustbin</h3>
+            <p class="tech-card-desc">It separates the waste based on dry, metal, wet, and plastic using intelligent multi-sensor detection and automated sorting chambers.</p>
+          </div>
+          <div class="tech-stack-row">
+            <span class="tech-stack-chip">Smart Dustbin</span>
+            <span class="tech-stack-chip">Automated Sorting</span>
+            <span class="tech-stack-chip">Sensors &amp; Microcontroller</span>
+            <span class="tech-stack-chip">IoT</span>
+          </div>
+        </div>
+
+        <!-- Slot 2: Drone -->
+        <div class="tech-card">
+          <div class="tech-card-top">
+            <span class="tech-tag">Robotics &amp; Aerial</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+          </div>
+          <div>
+            <h3 class="tech-card-title">Drone</h3>
+            <p class="tech-card-desc">A small drone that can fly without a camera, engineered for agile flight control, aerodynamic stability, and autonomous stabilization.</p>
+          </div>
+          <div class="tech-stack-row">
+            <span class="tech-stack-chip">Small Drone</span>
+            <span class="tech-stack-chip">Flight Controller</span>
+            <span class="tech-stack-chip">Aerodynamics</span>
+            <span class="tech-stack-chip">Robotics</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== CONTACT SECTION ==================== -->
+  <section class="contact-section" id="contact">
+    <div class="contact-container">
+      <div class="contact-header">
+        <h2 class="section-title">Get In Touch</h2>
+        <p class="contact-subtext">
+          Have an exciting project, AI collaboration, 3D design idea, or inquiry? Feel free to reach out directly through email or phone.
+        </p>
+      </div>
+
+      <div class="contact-grid">
+        <!-- Email Contact Card -->
+        <a href="mailto:eswarprasanth94@gmail.com" class="contact-card">
+          <div class="contact-card-top">
+            <div class="contact-icon-bubble">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                <polyline points="22,6 12,13 2,6"></polyline>
+              </svg>
+            </div>
+            <div class="contact-arrow-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="7" y1="17" x2="17" y2="7"></line>
+                <polyline points="7 7 17 7 17 17"></polyline>
+              </svg>
+            </div>
+          </div>
+          <div>
+            <div class="contact-label">Email Address</div>
+            <div class="contact-value">eswarprasanth94@gmail.com</div>
+          </div>
+        </a>
+
+        <!-- Phone Contact Card -->
+        <a href="tel:+918639181003" class="contact-card">
+          <div class="contact-card-top">
+            <div class="contact-icon-bubble">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+              </svg>
+            </div>
+            <div class="contact-arrow-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="7" y1="17" x2="17" y2="7"></line>
+                <polyline points="7 7 17 7 17 17"></polyline>
+              </svg>
+            </div>
+          </div>
+          <div>
+            <div class="contact-label">Mobile Number</div>
+            <div class="contact-value">+91 8639181003</div>
+          </div>
+        </a>
+      </div>
+
+      <div class="contact-footer-note">
+        &copy; 2026 Pudi Eswar Prasanth &bull; Designed &amp; Engineered
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // ==================== HERO SCROLL SWIPE ANIMATION (OPTIMIZED) ====================
+    (function initHeroScroll() {
+      const heroText = document.getElementById('heroText');
+      const heroPhoto = document.getElementById('heroPhoto');
+      if (!heroText || !heroPhoto) return;
+
+      let currentScroll = 0;
+      let targetScroll = 0;
+      let heroRafId = null;
+
+      function updateHero() {
+        const diff = targetScroll - currentScroll;
+        if (Math.abs(diff) < 0.15) {
+          currentScroll = targetScroll;
+          heroRafId = null;
+        } else {
+          currentScroll += diff * 0.12;
+          heroRafId = requestAnimationFrame(updateHero);
+        }
+
+        const maxDistance = 600;
+        const progress = Math.min(Math.max(currentScroll / maxDistance, 0), 1);
+
+        const textTranslateX = -progress * 110;
+        const photoTranslateX = progress * 110;
+        const opacity = Math.max(1 - progress * 1.15, 0);
+
+        heroText.style.transform = `translate3d(${textTranslateX}vw, 0, 0)`;
+        heroText.style.opacity = opacity;
+
+        heroPhoto.style.transform = `translate3d(${photoTranslateX}vw, 0, 0)`;
+        heroPhoto.style.opacity = opacity;
+
+        if (opacity <= 0.05) {
+          heroText.style.pointerEvents = 'none';
+          heroPhoto.style.pointerEvents = 'none';
+        } else {
+          heroText.style.pointerEvents = 'auto';
+          heroPhoto.style.pointerEvents = 'auto';
+        }
+      }
+
+      function onScroll() {
+        targetScroll = window.pageYOffset || document.documentElement.scrollTop;
+        if (!heroRafId) {
+          heroRafId = requestAnimationFrame(updateHero);
+        }
+      }
+
+      window.addEventListener('scroll', onScroll, { passive: true });
+      updateHero();
+    })();
+
+    // ==================== 3D CAROUSEL IMPLEMENTATION (PERFORMANCE OPTIMIZED) ====================
+    (function init3DCarousel() {
+      const canvas = document.getElementById('carouselCanvas');
+      const showcaseBox = document.getElementById('showcaseBox');
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+      const modelLoader = document.getElementById('modelLoader');
+      const loaderText = document.getElementById('loaderText');
+      const loaderSpinner = document.getElementById('loaderSpinner');
+      const categoryButtons = document.querySelectorAll('.design-buttons .design-btn');
+
+      if (!canvas || !showcaseBox || typeof THREE === 'undefined' || !THREE.GLTFLoader) {
+        console.error('Three.js, GLTFLoader, or required DOM elements not found.');
+        return;
+      }
+
+      // Exact 3D model paths according to project structure specifications
+      const CATEGORIES = {
+        aerospace: {
+          name: 'Aerospace Designs',
+          paths: [
+            './models/Aerospace%20Designs/Aerospace01.glb',
+            './models/Aerospace%20Designs/Aerospace02.glb',
+            './models/Aerospace%20Designs/Aerospace03.glb'
+          ]
+        },
+        automobile: {
+          name: 'Automobile Designs',
+          paths: [
+            './models/Automobile%20Designs/Automobile01.glb',
+            './models/Automobile%20Designs/Automobile02.glb',
+            './models/Automobile%20Designs/Automobile03.glb'
+          ]
+        },
+        character: {
+          name: 'Character Designs',
+          paths: [
+            './models/Character%20Designs/character01.glb',
+            './models/Character%20Designs/character02.glb',
+            './models/Character%20Designs/character03.glb'
+          ]
+        }
+      };
+
+      // State
+      let currentCategory = 'aerospace';
+      let activeIndex = 0; // Model index displayed at Center (0, 1, or 2)
+      let isTransitioning = false;
+      let transitionStartTime = 0;
+      const TRANSITION_DURATION = 600; // 600ms smooth cubic easeInOut transition
+      let currentTransition = null;
+
+      // Model memory cache: { [categoryKey]: [model0, model1, model2] }
+      const categoryCache = {};
+      let activeLoadId = 0;
+
+      // Currently rendered slots: { center: Group, right: Group, left: Group }
+      let displayedSlots = {
+        center: null,
+        left: null,
+        right: null
+      };
+
+      // Interactive drag rotation state
+      let isDragging = false;
+      let lastPointerX = 0;
+      let dragVelocity = 0;
+
+      // Viewport & tab visibility flags for demand-based rendering
+      let isShowcaseVisible = false;
+      let isTabVisible = !document.hidden;
+      let isLoopRunning = false;
+      let rafId = null;
+
+      // Frame-rate independent clock
+      const clock = new THREE.Clock(false);
+
+      // Three.js Core Setup
+      const scene = new THREE.Scene();
+      scene.fog = new THREE.FogExp2(0xffffff, 0.018);
+
+      const camera = new THREE.PerspectiveCamera(40, showcaseBox.clientWidth / showcaseBox.clientHeight, 0.1, 100);
+      camera.position.set(0, 0.2, 5.5);
+      camera.lookAt(0, 0, 0);
+
+      const renderer = new THREE.WebGLRenderer({
+        canvas: canvas,
+        antialias: true,
+        alpha: true,
+        powerPreference: 'high-performance'
+      });
+      // Cap at 1.5 to save 44% pixel shading on high-DPI/Retina screens while retaining crisp fidelity
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+      renderer.setSize(showcaseBox.clientWidth, showcaseBox.clientHeight);
+      renderer.outputEncoding = THREE.sRGBEncoding;
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      renderer.toneMappingExposure = 1.15;
+
+      // Consolidated Studio Lighting (High Visual Fidelity, Half the Shader Overhead)
+      const ambientLight = new THREE.AmbientLight(0xffffff, 1.6);
+      scene.add(ambientLight);
+
+      const keyLight = new THREE.DirectionalLight(0xffffff, 1.6);
+      keyLight.position.set(4, 5, 4);
+      scene.add(keyLight);
+
+      const fillLight = new THREE.DirectionalLight(0xddeeff, 1.0);
+      fillLight.position.set(-4, 3, 3);
+      scene.add(fillLight);
+
+      // Backlight & yellow rim light combined for edge definition against black background
+      const rimLight = new THREE.DirectionalLight(0xffcc19, 1.2);
+      rimLight.position.set(0, 3, -4);
+      scene.add(rimLight);
+
+      // Dynamic slot layout based on showcase container dimensions
+      function getLayout() {
+        const w = showcaseBox.clientWidth;
+        const isMobile = w < 620;
+        const isTablet = w < 840;
+
+        if (isMobile) {
+          return {
+            center: { x: 0, y: 0.0, z: 0, scale: 0.82 },
+            left:   { x: -1.55, y: -0.05, z: -0.85, scale: 0.46 },
+            right:  { x: 1.55, y: -0.05, z: -0.85, scale: 0.46 },
+            back:   { x: 0, y: -0.05, z: -1.8, scale: 0.25 }
+          };
+        } else if (isTablet) {
+          return {
+            center: { x: 0, y: 0.06, z: 0, scale: 0.96 },
+            left:   { x: -1.95, y: 0.01, z: -0.7, scale: 0.55 },
+            right:  { x: 1.95, y: 0.01, z: -0.7, scale: 0.55 },
+            back:   { x: 0, y: 0.01, z: -1.7, scale: 0.30 }
+          };
+        } else {
+          return {
+            center: { x: 0, y: 0.08, z: 0, scale: 1.08 },
+            left:   { x: -2.3, y: 0.02, z: -0.65, scale: 0.62 },
+            right:  { x: 2.3, y: 0.02, z: -0.65, scale: 0.62 },
+            back:   { x: 0, y: 0.02, z: -1.6, scale: 0.35 }
+          };
+        }
+      }
+
+      // Easing function: Cubic Ease-In-Out
+      function easeInOutCubic(t) {
+        return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+      }
+
+      // Apply slot position and scale
+      function applySlotTransform(group, slot) {
+        if (!group) return;
+        group.position.set(slot.x, slot.y, slot.z);
+        group.scale.setScalar(slot.scale);
+      }
+
+      // Normalize model dimensions and center pivot once upon load
+      function normalizeModel(gltfScene, path) {
+        const root = new THREE.Group();
+        const pivot = new THREE.Group();
+        root.add(pivot);
+
+        gltfScene.updateMatrixWorld(true);
+        const box = new THREE.Box3().setFromObject(gltfScene);
+        const center = box.getCenter(new THREE.Vector3());
+        const size = box.getSize(new THREE.Vector3());
+
+        const maxDim = Math.max(size.x, size.y, size.z) || 1;
+        const targetDim = 2.3;
+        const normScale = targetDim / maxDim;
+
+        // Center model inside pivot
+        gltfScene.position.set(-center.x, -center.y, -center.z);
+        pivot.add(gltfScene);
+        pivot.scale.setScalar(normScale);
+
+        // Ensure double-sided materials and correct rendering
+        gltfScene.traverse(child => {
+          if (child.isMesh && child.material) {
+            const mats = Array.isArray(child.material) ? child.material : [child.material];
+            mats.forEach(m => {
+              m.side = THREE.DoubleSide;
+            });
+          }
+        });
+
+        root.userData = {
+          path: path,
+          pivot: pivot
+        };
+
+        return root;
+      }
+
+      // GLTF Loader
+      const gltfLoader = new THREE.GLTFLoader();
+
+      // Resolve candidate URLs to support http://localhost:3000, Live Server, and file:// fallback
+      function getCandidateUrls(relPath) {
+        const cleanPath = relPath.replace(/^\.\//, '');
+        const decodedPath = decodeURIComponent(relPath);
+        const encodedPath = encodeURI(decodedPath);
+        const cleanEncoded = encodedPath.replace(/^\.\//, '');
+        const cleanDecoded = decodedPath.replace(/^\.\//, '');
+
+        const urls = [];
+
+        // 1. Exact path as specified
+        urls.push(relPath);
+        if (encodedPath !== relPath) urls.push(encodedPath);
+        if (decodedPath !== relPath) urls.push(decodedPath);
+
+        // 2. If opened via file:// protocol directly in browser, route through local server with CORS
+        if (window.location.protocol === 'file:') {
+          urls.push(`http://localhost:3000/${cleanEncoded}`);
+          urls.push(`http://127.0.0.1:3000/${cleanEncoded}`);
+          urls.push(`http://localhost:3000/${cleanDecoded}`);
+          urls.push(`http://localhost:5500/${cleanEncoded}`);
+          urls.push(`http://127.0.0.1:5500/${cleanEncoded}`);
+        }
+
+        return Array.from(new Set(urls));
+      }
+
+      // Load a single GLB model with full validation
+      function loadSingleModel(relPath) {
+        const candidateUrls = getCandidateUrls(relPath);
+
+        function tryLoad(index) {
+          if (index >= candidateUrls.length) {
+            return Promise.reject(new Error(`Failed to load GLB model from all candidate paths: ${relPath}`));
+          }
+          const url = candidateUrls[index];
+
+          return new Promise((resolve, reject) => {
+            gltfLoader.load(
+              url,
+              (gltf) => {
+                if (!gltf || !gltf.scene) {
+                  return tryLoad(index + 1).then(resolve).catch(reject);
+                }
+                console.log('✓ Successfully loaded real 3D model:', relPath, 'via:', url);
+                const normalized = normalizeModel(gltf.scene, relPath);
+                resolve(normalized);
+              },
+              undefined,
+              (error) => {
+                if (index + 1 < candidateUrls.length) {
+                  tryLoad(index + 1).then(resolve).catch(reject);
+                } else {
+                  console.error('✗ Failed to load 3D model from:', relPath, error);
+                  reject(error);
+                }
+              }
+            );
+          });
+        }
+
+        return tryLoad(0);
+      }
+
+      // Progressive Asynchronous Loading with Event-Loop Yielding
+      async function loadCategory(catKey) {
+        if (categoryCache[catKey]) {
+          return categoryCache[catKey];
+        }
+
+        const loadId = ++activeLoadId;
+        const catConfig = CATEGORIES[catKey];
+        if (!catConfig) return null;
+
+        // Show loading indicator
+        modelLoader.classList.add('visible');
+        if (loaderSpinner) loaderSpinner.style.display = 'block';
+        loaderText.textContent = `Loading ${catConfig.name}...`;
+
+        try {
+          const loadedModels = [];
+
+          // 1. Prioritize Center model first so it renders immediately!
+          const centerModel = await loadSingleModel(catConfig.paths[0]);
+          if (loadId !== activeLoadId) return null;
+          loadedModels.push(centerModel);
+
+          // If this is the active category switch, display the center model immediately!
+          if (currentCategory === catKey && activeIndex === 0) {
+            displayedSlots.center = centerModel;
+            scene.add(centerModel);
+            const layout = getLayout();
+            applySlotTransform(centerModel, layout.center);
+            modelLoader.classList.remove('visible');
+          }
+
+          // 2. Yield to browser event loop so scroll/render frames stay smooth
+          await new Promise(r => setTimeout(r, 50));
+          if (loadId !== activeLoadId) return null;
+
+          // 3. Load Right preview model
+          const rightModel = await loadSingleModel(catConfig.paths[1]);
+          if (loadId !== activeLoadId) return null;
+          loadedModels.push(rightModel);
+
+          if (currentCategory === catKey) {
+            displayedSlots.right = rightModel;
+            scene.add(rightModel);
+            const layout = getLayout();
+            applySlotTransform(rightModel, layout.right);
+          }
+
+          // 4. Yield again
+          await new Promise(r => setTimeout(r, 50));
+          if (loadId !== activeLoadId) return null;
+
+          // 5. Load Left preview model
+          const leftModel = await loadSingleModel(catConfig.paths[2]);
+          if (loadId !== activeLoadId) return null;
+          loadedModels.push(leftModel);
+
+          if (currentCategory === catKey) {
+            displayedSlots.left = leftModel;
+            scene.add(leftModel);
+            const layout = getLayout();
+            applySlotTransform(leftModel, layout.left);
+          }
+
+          categoryCache[catKey] = loadedModels;
+          return loadedModels;
+        } catch (err) {
+          console.error('Failed to load category models for:', catKey, err);
+          if (loadId === activeLoadId) {
+            if (loaderSpinner) loaderSpinner.style.display = 'none';
+            if (window.location.protocol === 'file:') {
+              loaderText.innerHTML = 'Browser blocked local file:// access.<br>Please run <b>npm start</b> and open <b>http://localhost:3000</b>';
+            } else {
+              loaderText.textContent = 'Failed to load 3D models. Please check console for details.';
+            }
+          }
+          return null;
+        }
+      }
+
+      // Display models for category
+      async function switchCategory(catKey) {
+        if (isTransitioning) return;
+
+        // Update button visual state
+        categoryButtons.forEach(btn => {
+          btn.classList.toggle('active', btn.dataset.category === catKey);
+        });
+
+        // Hide current models from scene
+        if (displayedSlots.center) scene.remove(displayedSlots.center);
+        if (displayedSlots.left) scene.remove(displayedSlots.left);
+        if (displayedSlots.right) scene.remove(displayedSlots.right);
+
+        currentCategory = catKey;
+        activeIndex = 0;
+
+        const models = await loadCategory(catKey);
+        if (!models || models.length < 3) return;
+
+        // Hide loading indicator
+        modelLoader.classList.remove('visible');
+
+        const layout = getLayout();
+        const centerModel = models[0];
+        const rightModel = models[1];
+        const leftModel = models[2];
+
+        displayedSlots = {
+          center: centerModel,
+          right: rightModel,
+          left: leftModel
+        };
+
+        scene.add(centerModel);
+        scene.add(leftModel);
+        scene.add(rightModel);
+
+        applySlotTransform(centerModel, layout.center);
+        applySlotTransform(leftModel, layout.left);
+        applySlotTransform(rightModel, layout.right);
+      }
+
+      // Zero-Allocation Smooth Carousel Navigation
+      function navigate(direction) {
+        if (isTransitioning) return;
+        const models = categoryCache[currentCategory];
+        if (!models || models.length < 3) return;
+
+        isTransitioning = true;
+        transitionStartTime = performance.now();
+
+        const L = getLayout();
+        const M_center = models[activeIndex];
+        const M_right = models[(activeIndex + 1) % 3];
+        const M_left = models[(activeIndex + 2) % 3];
+
+        if (direction === 'next') {
+          // Right arrow clicked:
+          // 1. Center model moves left and scales down
+          // 2. Right model moves center and scales up
+          // 3. Left model glides along background Bezier arc around to the right
+          const targetNextIndex = (activeIndex + 1) % 3;
+
+          currentTransition = {
+            centerItem: { obj: M_center, start: L.center, end: L.left },
+            promotedItem: { obj: M_right, start: L.right, end: L.center },
+            wrappedItem: { obj: M_left, start: L.left, back: L.back, end: L.right },
+            onComplete: () => {
+              activeIndex = targetNextIndex;
+
+              displayedSlots = {
+                center: models[activeIndex],
+                right: models[(activeIndex + 1) % 3],
+                left: models[(activeIndex + 2) % 3]
+              };
+
+              const curLayout = getLayout();
+              applySlotTransform(displayedSlots.center, curLayout.center);
+              applySlotTransform(displayedSlots.right, curLayout.right);
+              applySlotTransform(displayedSlots.left, curLayout.left);
+
+              isTransitioning = false;
+              currentTransition = null;
+            }
+          };
+        } else if (direction === 'prev') {
+          // Left arrow clicked:
+          // 1. Center model moves right and scales down
+          // 2. Left model moves center and scales up
+          // 3. Right model glides along background Bezier arc around to the left
+          const targetPrevIndex = (activeIndex + 2) % 3;
+
+          currentTransition = {
+            centerItem: { obj: M_center, start: L.center, end: L.right },
+            promotedItem: { obj: M_left, start: L.left, end: L.center },
+            wrappedItem: { obj: M_right, start: L.right, back: L.back, end: L.left },
+            onComplete: () => {
+              activeIndex = targetPrevIndex;
+
+              displayedSlots = {
+                center: models[activeIndex],
+                right: models[(activeIndex + 1) % 3],
+                left: models[(activeIndex + 2) % 3]
+              };
+
+              const curLayout = getLayout();
+              applySlotTransform(displayedSlots.center, curLayout.center);
+              applySlotTransform(displayedSlots.right, curLayout.right);
+              applySlotTransform(displayedSlots.left, curLayout.left);
+
+              isTransitioning = false;
+              currentTransition = null;
+            }
+          };
+        }
+      }
+
+      // Event Listeners
+      if (prevBtn) {
+        prevBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          navigate('prev');
+        });
+      }
+
+      if (nextBtn) {
+        nextBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          navigate('next');
+        });
+      }
+
+      categoryButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const cat = btn.dataset.category;
+          if (cat && cat !== currentCategory) {
+            switchCategory(cat);
+          }
+        });
+      });
+
+      // Interactive drag rotation for active center model
+      function onPointerDown(e) {
+        isDragging = true;
+        lastPointerX = e.clientX || (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
+        dragVelocity = 0;
+        canvas.style.cursor = 'grabbing';
+      }
+
+      function onPointerMove(e) {
+        if (!isDragging) return;
+        const clientX = e.clientX || (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
+        const dx = clientX - lastPointerX;
+        lastPointerX = clientX;
+        dragVelocity = dx * 0.007;
+
+        if (displayedSlots.center && displayedSlots.center.userData && displayedSlots.center.userData.pivot) {
+          displayedSlots.center.userData.pivot.rotation.y += dragVelocity;
+        }
+      }
+
+      function onPointerUp() {
+        isDragging = false;
+        canvas.style.cursor = 'grab';
+      }
+
+      canvas.addEventListener('mousedown', onPointerDown);
+      window.addEventListener('mousemove', onPointerMove);
+      window.addEventListener('mouseup', onPointerUp);
+
+      canvas.addEventListener('touchstart', onPointerDown, { passive: true });
+      window.addEventListener('touchmove', onPointerMove, { passive: true });
+      window.addEventListener('touchend', onPointerUp, { passive: true });
+
+      // Keyboard arrow navigation
+      window.addEventListener('keydown', (e) => {
+        if (isShowcaseVisible) {
+          if (e.key === 'ArrowLeft') {
+            navigate('prev');
+          } else if (e.key === 'ArrowRight') {
+            navigate('next');
+          }
+        }
+      });
+
+      // Responsive Resize (Debounced)
+      let resizeRaf = null;
+      function onWindowResize() {
+        const width = showcaseBox.clientWidth;
+        const height = showcaseBox.clientHeight;
+        if (!width || !height) return;
+
+        camera.aspect = width / height;
+        camera.position.z = width < 620 ? 6.5 : (width < 840 ? 5.8 : 5.4);
+        camera.updateProjectionMatrix();
+
+        renderer.setSize(width, height);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+
+        if (!isTransitioning && displayedSlots.center) {
+          const layout = getLayout();
+          applySlotTransform(displayedSlots.center, layout.center);
+          applySlotTransform(displayedSlots.left, layout.left);
+          applySlotTransform(displayedSlots.right, layout.right);
+        }
+      }
+
+      window.addEventListener('resize', () => {
+        if (resizeRaf) cancelAnimationFrame(resizeRaf);
+        resizeRaf = requestAnimationFrame(onWindowResize);
+      }, { passive: true });
+
+      onWindowResize();
+
+      // Main Animation Loop
+      function renderLoop() {
+        if (!isLoopRunning) return;
+        rafId = requestAnimationFrame(renderLoop);
+
+        const delta = Math.min(clock.getDelta(), 0.08); // Cap delta to avoid jumps after blur
+
+        // Update transition if in progress - Zero Allocations, Pure Math Interpolation
+        if (isTransitioning && currentTransition) {
+          const elapsed = performance.now() - transitionStartTime;
+          const progress = Math.min(Math.max(elapsed / TRANSITION_DURATION, 0), 1);
+          const t = easeInOutCubic(progress);
+
+          // 1. Center item linear slot lerp
+          const c = currentTransition.centerItem;
+          c.obj.position.x = c.start.x + (c.end.x - c.start.x) * t;
+          c.obj.position.y = c.start.y + (c.end.y - c.start.y) * t;
+          c.obj.position.z = c.start.z + (c.end.z - c.start.z) * t;
+          c.obj.scale.setScalar(c.start.scale + (c.end.scale - c.start.scale) * t);
+
+          // 2. Promoted item linear slot lerp
+          const p = currentTransition.promotedItem;
+          p.obj.position.x = p.start.x + (p.end.x - p.start.x) * t;
+          p.obj.position.y = p.start.y + (p.end.y - p.start.y) * t;
+          p.obj.position.z = p.start.z + (p.end.z - p.start.z) * t;
+          p.obj.scale.setScalar(p.start.scale + (p.end.scale - p.start.scale) * t);
+
+          // 3. Wrapped item quadratic Bezier arc through back
+          const w = currentTransition.wrappedItem;
+          const mt = 1 - t;
+          const mt2 = mt * mt;
+          const t2 = t * t;
+          const mtt2 = 2 * mt * t;
+
+          w.obj.position.x = mt2 * w.start.x + mtt2 * w.back.x + t2 * w.end.x;
+          w.obj.position.y = mt2 * w.start.y + mtt2 * w.back.y + t2 * w.end.y;
+          w.obj.position.z = mt2 * w.start.z + mtt2 * w.back.z + t2 * w.end.z;
+          w.obj.scale.setScalar(mt2 * w.start.scale + mtt2 * w.back.scale + t2 * w.end.scale);
+
+          if (progress >= 1) {
+            currentTransition.onComplete();
+          }
+        }
+
+        // Continuous horizontal rotation (Frame-Rate Independent with Delta-Time)
+        // Center model: Smooth continuous 360-degree rotation (or inertia from drag)
+        if (displayedSlots.center && displayedSlots.center.userData && displayedSlots.center.userData.pivot) {
+          if (isDragging) {
+            // Handled in pointermove
+          } else if (Math.abs(dragVelocity) > 0.0002) {
+            displayedSlots.center.userData.pivot.rotation.y += dragVelocity;
+            dragVelocity *= 0.94;
+          } else {
+            dragVelocity = 0;
+            // 0.65 radians/sec = smooth ~10-second full 360-degree continuous rotation
+            displayedSlots.center.userData.pivot.rotation.y += 0.65 * delta;
+          }
+        }
+
+        // Side models: rotate gently
+        if (displayedSlots.left && displayedSlots.left.userData && displayedSlots.left.userData.pivot) {
+          displayedSlots.left.userData.pivot.rotation.y += 0.25 * delta;
+        }
+        if (displayedSlots.right && displayedSlots.right.userData && displayedSlots.right.userData.pivot) {
+          displayedSlots.right.userData.pivot.rotation.y += 0.25 * delta;
+        }
+
+        renderer.render(scene, camera);
+      }
+
+      // Viewport & Tab Visibility Observer (Pauses rendering when offscreen or tab hidden)
+      function updateLoopState() {
+        const shouldRun = isShowcaseVisible && isTabVisible;
+        if (shouldRun && !isLoopRunning) {
+          isLoopRunning = true;
+          clock.start();
+          rafId = requestAnimationFrame(renderLoop);
+        } else if (!shouldRun && isLoopRunning) {
+          isLoopRunning = false;
+          if (rafId) {
+            cancelAnimationFrame(rafId);
+            rafId = null;
+          }
+          clock.stop();
+        }
+      }
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          isShowcaseVisible = entry.isIntersecting;
+          updateLoopState();
+        });
+      }, {
+        rootMargin: '120px 0px 120px 0px', // Activate smoothly before entering visible viewport
+        threshold: 0.01
+      });
+
+      observer.observe(showcaseBox);
+
+      document.addEventListener('visibilitychange', () => {
+        isTabVisible = !document.hidden;
+        updateLoopState();
+      });
+
+      // Initial category load
+      switchCategory('aerospace');
+    })();
+
+    // ==================== FOUNDER SCROLL REVEAL & SCREEN POWER-ON ANIMATION ====================
+    (function initFounderScroll() {
+      const founderSection = document.getElementById('founder');
+      const founderInfo = document.getElementById('founderInfo');
+      const phoneScreenOff = document.getElementById('phoneScreenOff');
+      const phoneScreenImg = document.getElementById('phoneScreenImg');
+      if (!founderSection || !founderInfo || !phoneScreenOff) return;
+
+      let founderRafId = null;
+
+      function updateFounderAnim() {
+        founderRafId = null;
+        const rect = founderSection.getBoundingClientRect();
+        const winHeight = window.innerHeight || document.documentElement.clientHeight;
+
+        // Total distance over which the entrance animation happens:
+        // Starts when founder section top enters viewport (rect.top <= winHeight)
+        // Completes when founder section top reaches ~25% of viewport
+        const startY = winHeight;
+        const endY = winHeight * 0.25;
+        const currentY = rect.top;
+
+        // Progress from 0 (offscreen/just entering from bottom) to 1 (in original area)
+        const progress = Math.min(Math.max((startY - currentY) / (startY - endY), 0), 1);
+
+        // Smooth cubic-out easing curve for natural deceleration
+        const easeOut = 1 - Math.pow(1 - progress, 3);
+
+        // Text translates completely from outside the left screen (-100vw) into its original place (0)
+        const textTranslateX = (1 - easeOut) * -100;
+        const textOpacity = Math.min(easeOut * 1.5, 1);
+
+        founderInfo.style.transform = `translate3d(${textTranslateX}vw, 0, 0)`;
+        founderInfo.style.opacity = textOpacity;
+
+        // Mobile screen logic:
+        // While text is traveling in (progress < 0.95), screen is turned off (black overlay visible)
+        // When text reaches original area (progress >= 0.95), screen turns on and reveals VESTIQ screen
+        if (progress >= 0.94) {
+          // Screen turns ON
+          phoneScreenOff.style.opacity = '0';
+          if (phoneScreenImg) {
+            phoneScreenImg.style.filter = 'brightness(1)';
+            phoneScreenImg.style.transform = 'scale(1)';
+          }
+        } else {
+          // Screen turns OFF
+          phoneScreenOff.style.opacity = '1';
+          if (phoneScreenImg) {
+            phoneScreenImg.style.filter = 'brightness(0.2)';
+            phoneScreenImg.style.transform = 'scale(0.98)';
+          }
+        }
+      }
+
+      function onScroll() {
+        if (!founderRafId) {
+          founderRafId = requestAnimationFrame(updateFounderAnim);
+        }
+      }
+
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+      updateFounderAnim();
+    })();
+
+  </script>
+
+</body>
+</html>
